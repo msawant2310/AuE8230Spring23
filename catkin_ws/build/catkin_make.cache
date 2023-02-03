@@ -1,0 +1,2 @@
+assignment1b
+-DCATKIN_DEVEL_PREFIX=/home/siqi/Spring_2023/AuE8230Spring23_SiqiZheng/AuE8230Spring23_SiqiZheng/catkin_ws/devel -DCMAKE_INSTALL_PREFIX=/home/siqi/Spring_2023/AuE8230Spring23_SiqiZheng/AuE8230Spring23_SiqiZheng/catkin_ws/install -G Unix Makefiles
