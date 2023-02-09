@@ -1,4 +1,4 @@
-Siqi Zheng
+Siqi
 Mrunali
 Rakshat
 Vaibhav
