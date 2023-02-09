@@ -23,11 +23,11 @@ For the Assignment1b, it is in the package assignment1b folder under the directo
 
 To run the package and start the node, using the following three commands for the three tasks in the "catkin_ws" path:
 
-'''Python
+```Python
  roslaunch assignment1b circle.launch
  roslaunch assignment1b square_openloop.launch
  roslaunch assignment1b square_closedloop.launch
-'''
+```
 
 
 ## Assignment1c
@@ -38,7 +38,7 @@ For the Assignment1c, it is in the package assignment1c folder under the directo
 
 To run the package and start the node, using the following three commands for the three tasks in the "catkin_ws" path:
 
-'''Linux
+```Linux
  roslaunch assignment1c circle_fast.launch
  roslaunch assignment1c circle_medium.launch
  roslaunch assignment1c circle_slow.launch
@@ -47,7 +47,7 @@ To run the package and start the node, using the following three commands for th
  roslaunch assignment1c square_slow.launch
  roslaunch assignment1c move.launch code:=square
  roslaunch assignment1c move.launch code:=circle
-'''
+```
 
 
 
