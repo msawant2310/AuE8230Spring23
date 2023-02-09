@@ -57,3 +57,10 @@
 /home/siqi/Spring_2023/AuE8230Spring23_SiqiZheng/AuE8230Spring23_SiqiZheng/catkin_ws/build/assignment1b/CMakeFiles/geometry_msgs_generate_messages_nodejs.dir
 /home/siqi/Spring_2023/AuE8230Spring23_SiqiZheng/AuE8230Spring23_SiqiZheng/catkin_ws/build/assignment1b/CMakeFiles/install/strip.dir
 /home/siqi/Spring_2023/AuE8230Spring23_SiqiZheng/AuE8230Spring23_SiqiZheng/catkin_ws/build/assignment1b/CMakeFiles/std_msgs_generate_messages_cpp.dir
+/home/siqi/Spring_2023/AuE8230Spring23_SiqiZheng/AuE8230Spring23_SiqiZheng/catkin_ws/build/assignment1c/CMakeFiles/install/strip.dir
+/home/siqi/Spring_2023/AuE8230Spring23_SiqiZheng/AuE8230Spring23_SiqiZheng/catkin_ws/build/assignment1c/CMakeFiles/install/local.dir
+/home/siqi/Spring_2023/AuE8230Spring23_SiqiZheng/AuE8230Spring23_SiqiZheng/catkin_ws/build/assignment1c/CMakeFiles/install.dir
+/home/siqi/Spring_2023/AuE8230Spring23_SiqiZheng/AuE8230Spring23_SiqiZheng/catkin_ws/build/assignment1c/CMakeFiles/list_install_components.dir
+/home/siqi/Spring_2023/AuE8230Spring23_SiqiZheng/AuE8230Spring23_SiqiZheng/catkin_ws/build/assignment1c/CMakeFiles/rebuild_cache.dir
+/home/siqi/Spring_2023/AuE8230Spring23_SiqiZheng/AuE8230Spring23_SiqiZheng/catkin_ws/build/assignment1c/CMakeFiles/edit_cache.dir
+/home/siqi/Spring_2023/AuE8230Spring23_SiqiZheng/AuE8230Spring23_SiqiZheng/catkin_ws/build/assignment1c/CMakeFiles/test.dir
