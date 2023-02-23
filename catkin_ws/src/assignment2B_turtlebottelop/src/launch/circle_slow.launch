@@ -1,0 +1,15 @@
+<launch>
+
+  <arg name="model" default="$(env TURTLEBOT3_MODEL)" doc="model type [burger, waffle, waffle_pi]"/>
+  <arg name="x_pos" default="0.0"/>
+  <arg name="y_pos" default="0.0"/>
+  <arg name="z_pos" default="0.0"/>
+  <param name="model" value="$(arg model)"/>
+  <node pkg="assignment2B_turtlebottelop" type="circle.py" name="circle">
+  <param name="tol" value="0.1"/>
+  <param name="atol" value="0.01"/>
+  <param name="l_vel" value="0.1"/>
+  <param name="a_vel" value="0.3"/>
+
+  </node>
+</launch>

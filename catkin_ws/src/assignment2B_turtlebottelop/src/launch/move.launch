@@ -1,0 +1,11 @@
+<launch>
+
+  <arg name="model" default="$(env TURTLEBOT3_MODEL)" doc="model type [burger, waffle, waffle_pi]"/>
+
+  <param name="model" value="$(arg model)"/>
+  <arg name="code" default="circle"/>
+
+  <node pkg="assignment2B_turtlebottelop" type="circle2.py" name="circle2" if="$(eval arg('code') == 'circle')"/>
+  <node pkg="assignment2B_turtlebottelop" type="square2.py" name="square2" if="$(eval arg('code') == 'square')"/>
+  
+</launch>

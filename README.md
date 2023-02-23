@@ -9,6 +9,7 @@ All the videos are in the corresponding package folder.
 - Prerequisite
 - Assignment1b
 - Assignment1c
+- Assignment2B
 
 
 ## Prerequisite
@@ -48,6 +49,12 @@ To run the package and start the node, using the following three commands for th
  roslaunch assignment1c move.launch code:=square
  roslaunch assignment1c move.launch code:=circle
 ```
+## Assignment2B
+
+
+Assignment2B is created by the group4.
+For the Assignment2B, a more detailed readme file is in its package folder. 
+
 
 
 

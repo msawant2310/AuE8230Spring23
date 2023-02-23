@@ -57,6 +57,7 @@ all: gtest/all
 all: turtlebot3_simulations/turtlebot3_simulations/all
 all: assignment1b/all
 all: assignment1c/all
+all: assignment2B_turtlebottelop/all
 all: turtlebot3_simulations/turtlebot3_fake/all
 all: turtlebot3_simulations/turtlebot3_gazebo/all
 
@@ -67,6 +68,7 @@ preinstall: gtest/preinstall
 preinstall: turtlebot3_simulations/turtlebot3_simulations/preinstall
 preinstall: assignment1b/preinstall
 preinstall: assignment1c/preinstall
+preinstall: assignment2B_turtlebottelop/preinstall
 preinstall: turtlebot3_simulations/turtlebot3_fake/preinstall
 preinstall: turtlebot3_simulations/turtlebot3_gazebo/preinstall
 
@@ -82,6 +84,7 @@ clean: gtest/clean
 clean: turtlebot3_simulations/turtlebot3_simulations/clean
 clean: assignment1b/clean
 clean: assignment1c/clean
+clean: assignment2B_turtlebottelop/clean
 clean: turtlebot3_simulations/turtlebot3_fake/clean
 clean: turtlebot3_simulations/turtlebot3_gazebo/clean
 
@@ -136,6 +139,24 @@ assignment1c/preinstall:
 assignment1c/clean:
 
 .PHONY : assignment1c/clean
+
+#=============================================================================
+# Directory level rules for directory assignment2B_turtlebottelop
+
+# Recursive "all" directory target.
+assignment2B_turtlebottelop/all:
+
+.PHONY : assignment2B_turtlebottelop/all
+
+# Recursive "preinstall" directory target.
+assignment2B_turtlebottelop/preinstall:
+
+.PHONY : assignment2B_turtlebottelop/preinstall
+
+# Recursive "clean" directory target.
+assignment2B_turtlebottelop/clean:
+
+.PHONY : assignment2B_turtlebottelop/clean
 
 #=============================================================================
 # Directory level rules for directory gtest
