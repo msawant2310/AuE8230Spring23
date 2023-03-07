@@ -29,9 +29,9 @@ class EmergyBrake():
 
     def emergy_brake(self):
         self.vel_msg = Twist()
-        constant_x_vel = 0.2
+        constant_x_vel = 0.5
         while not rospy.is_shutdown():
-           if self.lookahead_dist >= 1.5:
+           if self.lookahead_dist >= 1.0:
                self.vel_msg.linear.x = constant_x_vel
            else:
                self.vel_msg.linear.x = 0
