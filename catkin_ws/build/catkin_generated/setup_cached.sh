@@ -8,3 +8,4 @@
 
 # modified environment variables
 export PWD='/home/siqi/Spring_2023/AuE8230Spring23_SiqiZheng/AuE8230Spring23_SiqiZheng/catkin_ws/build'
+export PYTHONPATH="/home/siqi/Spring_2023/AuE8230Spring23_SiqiZheng/AuE8230Spring23_SiqiZheng/catkin_ws/devel/lib/python3/dist-packages:$PYTHONPATH"
