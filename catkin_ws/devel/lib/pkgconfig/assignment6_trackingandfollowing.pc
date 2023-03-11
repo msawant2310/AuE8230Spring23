@@ -1,0 +1,8 @@
+prefix=/home/siqi/Spring_2023/AuE8230Spring23_SiqiZheng/AuE8230Spring23_SiqiZheng/catkin_ws/devel
+
+Name: assignment6_trackingandfollowing
+Description: Description of assignment6_trackingandfollowing
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

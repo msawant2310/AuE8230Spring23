@@ -1,0 +1,8 @@
+prefix=/home/siqi/Spring_2023/AuE8230Spring23_SiqiZheng/AuE8230Spring23_SiqiZheng/catkin_ws/devel
+
+Name: turtlebot3_autorace_msgs
+Description: Description of turtlebot3_autorace_msgs
+Version: 1.1.0
+Cflags: -I/home/siqi/Spring_2023/AuE8230Spring23_SiqiZheng/AuE8230Spring23_SiqiZheng/catkin_ws/devel/include
+Libs: -L${prefix}/lib 
+Requires: std_msgs message_runtime
