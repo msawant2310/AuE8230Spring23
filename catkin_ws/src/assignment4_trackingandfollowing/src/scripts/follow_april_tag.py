@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python3
 
 import rospy
@@ -10,7 +9,7 @@ class tagFollow():
     def __init__(self):
         
         #initializing the node
-        rospy.init_node('apriltag',anonymous=True)
+        rospy.init_node('follow_april_tag',anonymous=True)
         self.vel_pub = rospy.Publisher('/cmd_vel',Twist,queue_size=10)          #publisher - velocity commands
         self.scan_sub = rospy.Subscriber('/tag_detections',AprilTagDetectionArray,self.tag_update)    #subscriber - Laser scans, callback function that stores the subscribed data in a variable
         self.rate = rospy.Rate(10)

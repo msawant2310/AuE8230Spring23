@@ -18,7 +18,7 @@ class LineFollower(object):
         self.height = 0
         self.width = 0
         self.traj_flag = False
-        self.pid_controller = PID(P = 0.001, I = 0.000, D = 0.0004)
+        self.pid_controller = PID(P = 0.0015, I = 0.000, D = 0.0007)
         self.pid_controller.clear()
 
     def camera_callback(self, data):
