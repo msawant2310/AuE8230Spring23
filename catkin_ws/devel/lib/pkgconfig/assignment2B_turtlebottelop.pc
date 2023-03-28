@@ -1,8 +1,0 @@
-prefix=/home/siqi/Spring_2023/AuE8230Spring23_SiqiZheng/AuE8230Spring23_SiqiZheng/catkin_ws/devel
-
-Name: assignment2B_turtlebottelop
-Description: Description of assignment2B_turtlebottelop
-Version: 0.0.0
-Cflags: 
-Libs: -L${prefix}/lib 
-Requires: 

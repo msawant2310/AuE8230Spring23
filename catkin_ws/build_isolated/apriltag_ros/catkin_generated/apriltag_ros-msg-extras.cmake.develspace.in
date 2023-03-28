@@ -1,0 +1,2 @@
+set(apriltag_ros_MESSAGE_FILES "/home/siqi/Spring_2023/AuE8230Spring23_SiqiZheng/AuE8230Spring23_SiqiZheng/catkin_ws/src/apriltag_ros/apriltag_ros/msg/AprilTagDetection.msg;/home/siqi/Spring_2023/AuE8230Spring23_SiqiZheng/AuE8230Spring23_SiqiZheng/catkin_ws/src/apriltag_ros/apriltag_ros/msg/AprilTagDetectionArray.msg")
+set(apriltag_ros_SERVICE_FILES "/home/siqi/Spring_2023/AuE8230Spring23_SiqiZheng/AuE8230Spring23_SiqiZheng/catkin_ws/src/apriltag_ros/apriltag_ros/srv/AnalyzeSingleImage.srv")
