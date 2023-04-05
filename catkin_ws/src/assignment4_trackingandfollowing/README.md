@@ -1,3 +1,4 @@
+
 # AuE8230Spring23_hw4
 This is the ROS project folder for the AuE8230 course hw4. 
 
@@ -66,3 +67,18 @@ Challenges faced:
 It also got solved by connecting to local WIFI router connection.
 
 •	For the line following task on real turtlebot, initially the turtlebot could not follow the line. Possible reasons we could figure out where the camera not able to locate the centroid appropriately and PID controller not working appropriately. Both the issues were addressed by tuning the PID controller and using proper light to focus on the white line.
+
+run step by step
+PC:
+roscore
+
+PBC:
+roslaunch turtlebot3_autorace_camera raspberry_pi_camera_publish.launch
+
+PBC:
+roslaunch turtlebot3_bringup turtlebot3_robot.launch
+
+PC:
+roslaunch apriltag_ros continuous_detection.launch 
+
+roslaunch assignment4_trackingandfollowing turtlebot3_follow_apriltag.launch

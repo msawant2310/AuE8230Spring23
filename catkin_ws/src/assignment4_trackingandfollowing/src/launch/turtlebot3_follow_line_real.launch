@@ -1,0 +1,6 @@
+<launch>
+  
+  <node pkg="assignment4_trackingandfollowing" type="follow_line_step_real.py" name="line_following_node" output="screen"></node>
+
+  <!-- <node pkg="assignment4_trackingandfollowing" type="move_robot.py" name="move_robot_node" output="screen" /> -->
+</launch>
