@@ -2,6 +2,7 @@
 	
 
 import rospy
+import numpy as np
 from geometry_msgs.msg import Twist
 from sensor_msgs.msg import LaserScan
 import time
@@ -37,10 +38,12 @@ class WallFollowing():
         now = self._current_time()
         dt = now - self._last_time if self._last_time is not None else 1e-10
         pValue = pGain_lat*error_lat
+        rospy.loginfo(f"p value is {pValue}")
         dValue = dGain_lat*(error_lat - self.last_error_lat)/dt
+        dValue = np.clip(dValue, -0.1, 0.1)
         self.last_error_lat = error_lat
         self._last_time = now
-        return pValue
+        return pValue + dValue
     
     def pController_long(self,dist):
         pGain_long = 0.1
