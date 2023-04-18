@@ -72,7 +72,7 @@ set(generated_file_internal "/home/siqi/Spring_2023/AuE8230Spring23_SiqiZheng/Au
 set(generated_cubin_file_internal "/home/siqi/Spring_2023/AuE8230Spring23_SiqiZheng/AuE8230Spring23_SiqiZheng/catkin_ws/build_isolated/darknet_ros/CMakeFiles/darknet_ros_lib.dir/__/darknet/src/./darknet_ros_lib_generated_activation_kernels.cu.o.cubin.txt") # path
 
 set(CUDA_NVCC_EXECUTABLE "/usr/local/cuda/bin/nvcc") # path
-set(CUDA_NVCC_FLAGS -O3;-gencode;arch=compute_30,code=sm_30;-gencode;arch=compute_35,code=sm_35;-gencode;arch=compute_50,code=[sm_50,compute_50];-gencode;arch=compute_52,code=[sm_52,compute_52];-gencode;arch=compute_61,code=sm_61;-gencode;arch=compute_62,code=sm_62 ;; ) # list
+set(CUDA_NVCC_FLAGS -O3;-gencode;arch=compute_35,code=sm_35;-gencode;arch=compute_50,code=[sm_50,compute_50];-gencode;arch=compute_52,code=[sm_52,compute_52];-gencode;arch=compute_61,code=sm_61;-gencode;arch=compute_62,code=sm_62 ;; ) # list
 # Build specific configuration flags
 set(CUDA_NVCC_FLAGS_RELEASE  ; )
 set(CUDA_NVCC_FLAGS_DEBUG  ; )

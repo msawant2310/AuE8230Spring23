@@ -28,7 +28,7 @@ class LineFollower(object):
         # We get image dimensions and crop the parts of the image we dont need
         self.height, self.width, channels = cv_image.shape
         crop_img = cv_image[int((self.height/2)+100):int((self.height/2)+120)][1:int(self.width)]
-        #crop_img = cv_image[340:360][1:640]
+        #crop_img = cv_image[440:460][1:640]
 
         # Convert from RGB to HSV
         hsv = cv2.cvtColor(crop_img, cv2.COLOR_BGR2HSV)
