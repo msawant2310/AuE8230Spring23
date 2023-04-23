@@ -25,9 +25,9 @@ class CustomThread(threading.Thread):
 class KeyBoard():
     def __init__(self):
 
-        # start the keyboard detection
-        self.a = CustomThread()
-        self.a.start()
+        # # start the keyboard detection
+        # self.a = CustomThread()
+        # self.a.start()
 
         # initializing the node
         rospy.init_node('status', anonymous=True)
@@ -52,7 +52,8 @@ class KeyBoard():
         # init status
         self.keyboard_input = 'a'
         self.once_time_flag = False
-    
+        self.traj_flag = False
+
     def detect_stop_sign(self):
         # perform object detection on the camera image
         results = self.yolo_model(self.cv2_image)
@@ -89,9 +90,9 @@ class KeyBoard():
                 self.count += 1
                 if self.count >= 5:
                     self.once_time_flag = True
-                    self.keyboard_input = self.a.value
+                    self.keyboard_input = 'c'
 
-            self.draw_box(xmin, xmax, ymin, ymax)
+            # self.draw_box(xmin, xmax, ymin, ymax)
 
     def draw_box(self, xmin, xmax, ymin, ymax):
         # top
@@ -103,10 +104,37 @@ class KeyBoard():
         # right
         cv2.line(self.cv2_image, (xmax, ymin), (xmax, ymax), (0, 255, 0), 2)
 
+    def line_detection(self):
+        self.height, self.width, channels = self.cv2_image.shape
+        crop_img = self.cv2_image[340:380][1:400]
+        hsv = cv2.cvtColor(crop_img, cv2.COLOR_RGB2HSV)
+        # Threshold the HSV image to get only yellow colors
+        lower_yellow = np.array([20, 100, 100])
+        upper_yellow = np.array([50, 255, 255])
+        mask = cv2.inRange(hsv, lower_yellow, upper_yellow)
+        m = cv2.moments(mask, False)
+        try:
+            cx, cy = m['m10'] / m['m00'], m['m01'] / m['m00']
+            self.traj_flag = True
+            self.keyboard_input = 'c'
+            # rospy.loginfo("detect the line")
+        except ZeroDivisionError:
+            cx, cy = self.height / 2, self.width / 2
+            self.traj_flag = False
+            if self.keyboard_input == 'c':
+                self.keyboard_input = 'e'
+        # Draw the centroid in the resultut image
+        # cv2.circle(mask, (int(cx), int(cy)), 10, (0, 0, 255), -1)
+        # cv2.imshow("MASK", mask)
+        # cv2.waitKey(1)
+
     def camera_callback(self, msg):
         try:
             self.cv2_image = cv2.resize(self.bridge_object.compressed_imgmsg_to_cv2(
                 msg, desired_encoding="rgb8"), (400, 400), interpolation=cv2.INTER_AREA)
+            # if self.keyboard_input != 'b':
+            self.line_detection()
+            # Calculate centroid of the blob of binary image using ImageMoments
         except CvBridgeError as e:
             rospy.loginfo(e)
 
@@ -117,20 +145,23 @@ class KeyBoard():
 
             if self.once_time_flag == False:
 
-                self.detect_stop_sign()
-                cv2.imshow("Sign detection", cv2.cvtColor(
-                    self.cv2_image, cv2.COLOR_RGB2BGR))
-                cv2.waitKey(1)
+                if self.keyboard_input != 'a' and self.keyboard_input != 'b':
+                    self.detect_stop_sign()
+                    # cv2.imshow("Sign detection", cv2.cvtColor(
+                    #     self.cv2_image, cv2.COLOR_RGB2BGR))
+                    # cv2.waitKey(1)
 
             else:
                 if close_windows == False:
-                    cv2.destroyWindow("Sign detection")
-                    rospy.loginfo("close the window!")
+                    # cv2.destroyWindow("Sign detection")
+                    # cv2.destroyAllWindows()
+                    # rospy.loginfo("close the window!")
                     close_windows = True
 
-            if self.keyboard_input != 'd':
-                self.keyboard_input = self.a.value
+            # if self.keyboard_input != 'd' and self.keyboard_input != 'c' and self.keyboard_input != 'e':
+            #     self.keyboard_input = self.a.value
 
+            rospy.loginfo(f"the status is {self.keyboard_input}")
             # rospy.loginfo(f"keyboard input is {self.keyboard_input}")
             self.status_pub.publish(self.keyboard_input)
 

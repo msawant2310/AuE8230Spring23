@@ -17,20 +17,25 @@ class LineFollower(object):
         self.status_sub = rospy.Subscriber(
             '/status', String, self.update_status)
 
-        self.vel_pub = rospy.Publisher('/robot1/cmd_vel', Twist, queue_size=10)
+        self.vel_pub = rospy.Publisher('/cmd_vel', Twist, queue_size=10)
+        self.camera_pub = rospy.Publisher(
+            '/camera_flag', String, queue_size=10)
 
         self.twist_object = Twist()
         self.height = 0
         self.width = 0
         self.traj_flag = False
-        # self.pid_controller = PID(P=0.0015, I=0.000, D=0.0007)
-        self.pid_controller = PID(P=0.0012, I=0.000, D=0.0006)
+
+        # self.pid_controller = PID(P=0.0008, I=0.000, D=0.0005)
+        self.pid_controller = PID(P=0.001, I=0.000, D=0.0005)
         self.pid_controller.clear()
         self.rate = rospy.Rate(10)
+        self.camera_flag = 'F'
+        self.last_err = 0
         self.status = 'a'
 
     def start_camera(self):
-        self.image_sub = rospy.Subscriber("/robot1/camera/rgb/image_raw",
+        self.image_sub = rospy.Subscriber("/camera/image",
                                           Image, self.camera_callback)
 
     def update_status(self, data):
@@ -46,8 +51,9 @@ class LineFollower(object):
         # crop_img = cv_image[int((self.height/2)+100):int((self.height/2)+120)][1:int(self.width)]
         # rospy.loginfo(
         # f'image size is height: {self.height} width: {self.width}')
-        crop_img = cv_image[440:460][1:640]
+        crop_img = cv_image[int((self.height / 2) + 100):int((self.height / 2) + 120)][1:int(self.width)]
 
+        # crop_img = cv_image[220:240][1:320]
         # Convert from RGB to HSV
         hsv = cv2.cvtColor(crop_img, cv2.COLOR_BGR2HSV)
 
@@ -58,15 +64,19 @@ class LineFollower(object):
         """
 
         # Threshold the HSV image to get only yellow colors
-        lower_yellow = np.array([20, 100, 100])
-        upper_yellow = np.array([50, 255, 255])
+        lower_yellow = np.array([45, 30, 30])
+        upper_yellow = np.array([97, 255, 209])
         mask = cv2.inRange(hsv, lower_yellow, upper_yellow)
+        # lower_green_yellow = np.array([60, 80, 50])
+        # upper_green_yello = np.array([100, 180, 120])
+        # mask = cv2.inRange(crop_img, lower_green_yellow, upper_green_yello)
 
         # Calculate centroid of the blob of binary image using ImageMoments
         m = cv2.moments(mask, False)
 
         try:
             cx, cy = m['m10'] / m['m00'], m['m01'] / m['m00']
+            self.camera_flag = 'T'
             self.traj_flag = True
         except ZeroDivisionError:
             cx, cy = self.height / 2, self.width / 2
@@ -74,28 +84,33 @@ class LineFollower(object):
 
         # Draw the centroid in the resultut image
         # cv2.circle(img, center, radius, color[, thickness[, lineType[, shift]]])
-        # cv2.circle(mask, (int(cx), int(cy)), 10, (0, 0, 255), -1)
-        # # cv2.imshow("Original", cv_image)
-        # cv2.imshow("MASK", mask)
-        # cv2.waitKey(1)
+        cv2.circle(mask, (int(cx), int(cy)), 10, (0, 0, 255), -1)
+        cv2.imshow("orignal", cv_image)
+        # cv2.imshow("hsv", hsv)
+        cv2.imshow("MASK", mask)
+        cv2.waitKey(1)
 
         #################################
         ###   ENTER CONTROLLER HERE   ###
         #################################
-        self.find_trajectory(cx, cy)
+        if self.camera_flag == 'T':
+            self.find_trajectory(cx, cy)
 
         # rospy.loginfo("ANGULAR VALUE SENT===>"+str(self.twist_object.angular.z))
 
     def find_trajectory(self, cx, cy):
         # if not see the trajectory
         if self.traj_flag == False:
-            self.twist_object.linear.x = 0.1
+            self.pid_controller.update(3 * self.last_err)
+            self.twist_object.linear.x = 0.12  # 0.07
+            self.twist_object.angular.z = self.pid_controller.output
             # rospy.loginfo("lose the trajectory")
         else:
             err = -1 * (self.width / 2 - cx)
             self.pid_controller.update(err)
-            self.twist_object.linear.x = 0.1
+            self.twist_object.linear.x = 0.12  # 0.07
             self.twist_object.angular.z = self.pid_controller.output
+            self.last_err = err
             # rospy.loginfo("the error is {}".format(-1 * err))
 
         # rospy.loginfo("cx value is {}, cy value is {}".format(cx, cy))
@@ -104,23 +119,25 @@ class LineFollower(object):
         start_time = None
         while not rospy.is_shutdown():
 
+            self.camera_pub.publish(self.camera_flag)
             # Make it start turning
             if self.status == 'c':
+
                 self.vel_pub.publish(self.twist_object)
-                if start_time != None:
-                    now = rospy.get_time()
-                    rospy.loginfo(f"passed time {now - start_time}")
-                    if now - start_time > 6:
-                        rospy.loginfo("stop the robot!!!!!")
-                        self.twist_object.linear.x = 0
-                        self.twist_object.angular.z = 0
-                        self.vel_pub.publish(self.twist_object)
-                        rospy.sleep(3)
-                        start_time = None
-            elif self.status == 'd':
-                rospy.loginfo("stop the robot after 6 seconds")
-                if start_time == None:
-                    start_time = rospy.get_time()
+                #     if start_time != None:
+                #         now = rospy.get_time()
+                #         rospy.loginfo(f"passed time {now - start_time}")
+                #         if now - start_time > 6:
+                #             rospy.loginfo("stop the robot!!!!!")
+                #             self.twist_object.linear.x = 0
+                #             self.twist_object.angular.z = 0
+                #             self.vel_pub.publish(self.twist_object)
+                #             rospy.sleep(3)
+                #             start_time = None
+                # elif self.status == 'd':
+                #     rospy.loginfo("stop the robot after 6 seconds")
+                #     if start_time == None:
+                #         start_time = rospy.get_time()
             else:
                 self.twist_object.linear.x = 0
                 self.twist_object.angular.z = 0
