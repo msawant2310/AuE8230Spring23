@@ -15,9 +15,10 @@ class WallFollowing():
         # initializing the node
         rospy.init_node('wall_follower', anonymous=True)
         # publisher - velocity commands
-        self.vel_pub = rospy.Publisher('/cmd_vel', Twist, queue_size=10)
+        self.vel_pub = rospy.Publisher('/robot1/cmd_vel', Twist, queue_size=10)
         # subscriber - Laser scans, callback function that stores the subscribed data in a variable
-        self.scan_sub = rospy.Subscriber('/scan', LaserScan, self.scan_update)
+        self.scan_sub = rospy.Subscriber(
+            '/robot1/scan', LaserScan, self.scan_update)
         # subcriber - status
         self.status_sub = rospy.Subscriber(
             '/status', String, self.update_status)
@@ -32,7 +33,8 @@ class WallFollowing():
         self.status = 'a'
 
     def update_status(self, data):
-        self.status = data.data
+        if data.data != 'a':
+            self.status = data.data
         # rospy.loginfo(f"the self.status is {self.status}")
 
     def scan_update(self, data):
@@ -116,6 +118,9 @@ class WallFollowing():
             self.vel_msg.angular.z = ang_z
             # publishing these values
             self.vel_pub.publish(self.vel_msg)
+
+            if self.lookahead_dist < 0.2:
+                self.status = 'b'
 
             if self.status != 'a':
                 self.vel_msg.linear.x = 0

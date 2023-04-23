@@ -47,12 +47,12 @@ class KeyBoard():
         self.count = 0
         self.bridge_object = CvBridge()
         self.image_sub = rospy.Subscriber(
-            "/camera/rgb/image_raw/compressed", CompressedImage, self.camera_callback)
+            "/robot1/camera/rgb/image_raw/compressed", CompressedImage, self.camera_callback)
 
         # init status
         self.keyboard_input = 'a'
         self.once_time_flag = False
-
+    
     def detect_stop_sign(self):
         # perform object detection on the camera image
         results = self.yolo_model(self.cv2_image)
@@ -89,8 +89,7 @@ class KeyBoard():
                 self.count += 1
                 if self.count >= 5:
                     self.once_time_flag = True
-            else:
-                self.keyboard_input = self.a.value
+                    self.keyboard_input = self.a.value
 
             self.draw_box(xmin, xmax, ymin, ymax)
 
@@ -113,12 +112,21 @@ class KeyBoard():
 
     def publish_status(self):
         ''' publish the status from the keyboard'''
+        close_windows = False
         while not rospy.is_shutdown():
 
-            self.detect_stop_sign()
-            cv2.imshow("Sign detection", cv2.cvtColor(
-                self.cv2_image, cv2.COLOR_RGB2BGR))
-            cv2.waitKey(1)
+            if self.once_time_flag == False:
+
+                self.detect_stop_sign()
+                cv2.imshow("Sign detection", cv2.cvtColor(
+                    self.cv2_image, cv2.COLOR_RGB2BGR))
+                cv2.waitKey(1)
+
+            else:
+                if close_windows == False:
+                    cv2.destroyWindow("Sign detection")
+                    rospy.loginfo("close the window!")
+                    close_windows = True
 
             if self.keyboard_input != 'd':
                 self.keyboard_input = self.a.value

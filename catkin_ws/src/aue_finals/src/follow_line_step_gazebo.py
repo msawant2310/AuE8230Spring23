@@ -17,7 +17,7 @@ class LineFollower(object):
         self.status_sub = rospy.Subscriber(
             '/status', String, self.update_status)
 
-        self.vel_pub = rospy.Publisher('/cmd_vel', Twist, queue_size=10)
+        self.vel_pub = rospy.Publisher('/robot1/cmd_vel', Twist, queue_size=10)
 
         self.twist_object = Twist()
         self.height = 0
@@ -30,7 +30,7 @@ class LineFollower(object):
         self.status = 'a'
 
     def start_camera(self):
-        self.image_sub = rospy.Subscriber("/camera/rgb/image_raw",
+        self.image_sub = rospy.Subscriber("/robot1/camera/rgb/image_raw",
                                           Image, self.camera_callback)
 
     def update_status(self, data):
@@ -101,23 +101,32 @@ class LineFollower(object):
         # rospy.loginfo("cx value is {}, cy value is {}".format(cx, cy))
 
     def line_follow(self):
-
+        start_time = None
         while not rospy.is_shutdown():
 
             # Make it start turning
             if self.status == 'c':
                 self.vel_pub.publish(self.twist_object)
+                if start_time != None:
+                    now = rospy.get_time()
+                    rospy.loginfo(f"passed time {now - start_time}")
+                    if now - start_time > 6:
+                        rospy.loginfo("stop the robot!!!!!")
+                        self.twist_object.linear.x = 0
+                        self.twist_object.angular.z = 0
+                        self.vel_pub.publish(self.twist_object)
+                        rospy.sleep(3)
+                        start_time = None
             elif self.status == 'd':
-                rospy.loginfo("stop the robot!!!!!!!!!!!")
-                self.twist_object.linear.x = 0
-                self.twist_object.angular.z = 0
-                self.vel_pub.publish(self.twist_object)
-                rospy.sleep(3)
+                rospy.loginfo("stop the robot after 6 seconds")
+                if start_time == None:
+                    start_time = rospy.get_time()
             else:
                 self.twist_object.linear.x = 0
                 self.twist_object.angular.z = 0
                 self.vel_pub.publish(self.twist_object)
                 break
+
             self.rate.sleep()
 
     def clean_up(self):
@@ -133,6 +142,8 @@ def main():
 
     while line_follower_object.status != 'c':
         continue
+
+    rospy.sleep(2)
 
     rospy.loginfo("start the camera")
     line_follower_object.start_camera()
