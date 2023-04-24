@@ -104,7 +104,7 @@ class WallFollowing():
         return pValue + dValue
 
     def pController_long(self, dist):
-        pGain_long = 0.1
+        pGain_long = 0.15
         return pGain_long * dist
 
     def wallFollowing(self):
