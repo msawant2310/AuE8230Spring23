@@ -23,8 +23,8 @@ class WallFollowing():
         self.status_sub = rospy.Subscriber(
             '/status', String, self.update_status)
 
-        self.camrea_flag_sub = rospy.Subscriber(
-            '/camera_flag', String, self.camera_flag_update)
+        self.camera_pub = rospy.Publisher(
+            '/camera_flag', String, queue_size=10)
         # init the parameters
         self.camera_flag = 'F'
         self.rate = rospy.Rate(10)
@@ -34,9 +34,6 @@ class WallFollowing():
         self.last_error_lat = 0
         self._last_time = None
         self.status = 'a'
-
-    def camera_flag_update(self, data):
-        self.camera_flag = data.data
 
     def update_status(self, data):
         self.status = data.data
@@ -76,10 +73,14 @@ class WallFollowing():
         self.laser_scan90 = left_min
         self.laser_scan270 = right_min
         self.lookahead_dist = front_min
-
-        rospy.loginfo(f"lookahead dist is {self.lookahead_dist}")
-        rospy.loginfo(f"laser_scan90 dist is {self.laser_scan90}")
-        rospy.loginfo(f"laser_scan270 dist is {self.laser_scan270}")
+        min_scan_value = min(
+            [self.laser_scan270, self.laser_scan90, self.lookahead_dist])
+        if min_scan_value > 0.97:
+            self.camera_flag = 'T'
+        # rospy.loginfo(f"camera flag is {self.camera_flag}")
+        # rospy.loginfo(f"lookahead dist is {self.lookahead_dist}")
+        # rospy.loginfo(f"laser_scan90 dist is {self.laser_scan90}")
+        # rospy.loginfo(f"laser_scan270 dist is {self.laser_scan270}")
 
     def currentError(self):
         d_90 = self.laser_scan90
@@ -110,6 +111,8 @@ class WallFollowing():
     def wallFollowing(self):
         self.vel_msg = Twist()
         while not rospy.is_shutdown():
+
+            self.camera_pub.publish(self.camera_flag)
             lin_x = self.pController_long(min(1.5, self.lookahead_dist))
             # changing the angular about z based on the error value
             self.vel_msg.linear.x = lin_x

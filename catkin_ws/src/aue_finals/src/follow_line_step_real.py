@@ -16,12 +16,13 @@ class LineFollower(object):
     def __init__(self):
         self.bridge_object = CvBridge()
 
+        self.camera_flag_sub = rospy.Subscriber(
+            '/camera_flag', String, self.update_camera_status)
         self.status_sub = rospy.Subscriber(
             '/status', String, self.update_status)
-
+        self.april_tag_sub = rospy.Subscriber(
+            '/april_tag_flag', String, self.april_tag_update)
         self.vel_pub = rospy.Publisher('/cmd_vel', Twist, queue_size=10)
-        self.camera_pub = rospy.Publisher(
-            '/camera_flag', String, queue_size=10)
 
         self.twist_object = Twist()
         self.height = 0
@@ -34,18 +35,26 @@ class LineFollower(object):
         self.pid_controller.clear()
         self.rate = rospy.Rate(10)
         self.camera_flag = 'F'
+        self.april_tag_flag = 'F'
         self.last_err = 0
         self.status = 'a'
         self.turn_flag = False
         self.start_time = None
 
+    def april_tag_update(self, data):
+        self.april_tag_flag = data.data
+
     def start_camera(self):
         self.image_sub = rospy.Subscriber("/camera/image",
                                           Image, self.camera_callback)
 
+    def update_camera_status(self, data):
+        self.camera_flag = data.data
+        rospy.loginfo(f"camera flag is {self.camera_flag}")
+
     def update_status(self, data):
         self.status = data.data
-        # self.status = 'c'
+        self.status = 'c'
 
     def camera_callback(self, data):
         # We select bgr8 because its the OpneCV encoding by default
@@ -70,18 +79,19 @@ class LineFollower(object):
         """
 
         # Threshold the HSV image to get only yellow colors
-        lower_yellow = np.array([45, 30, 30])
-        upper_yellow = np.array([97, 255, 209])
-        # hsv value
-        lower_red = np.array([20, 20, 80])
-        upper_red = np.array([60, 60, 255])
+        # without flashlight
+        # lower_yellow = np.array([45, 30, 30])
+        # upper_yellow = np.array([97, 255, 209])
+        # with flashlight
+        lower_yellow = np.array([15, 32, 70])
+        upper_yellow = np.array([75, 255, 210])
+        # stop sign hsv value
+        # lower_red = np.array([20, 20, 80])
+        # upper_red = np.array([60, 60, 255])
 
-        # if self.turn_flag == False
-        #     lower_yellow = np.array([17, 10, 135])
-        #     upper_yellow = np.array([99, 255, 255])
-        # else:
-        #     lower_yellow = np.array([16, 16, 73])
-        #     upper_yellow = np.array([120, 117, 154])
+        # stop sign hsv value with flashlight
+        lower_red = np.array([70, 70, 70])
+        upper_red = np.array([150, 190, 190])
 
         mask = cv2.inRange(hsv, lower_yellow, upper_yellow)
         mask2 = cv2.inRange(cv_image, lower_red, upper_red)
@@ -113,11 +123,11 @@ class LineFollower(object):
 
         # Draw the centroid in the resultut image
         # cv2.circle(img, center, radius, color[, thickness[, lineType[, shift]]])
-        # cv2.circle(mask, (int(cx), int(cy)), 10, (0, 0, 255), -1)
-        # cv2.imshow("orignal", cv_image)
-        # # cv2.imshow("hsv", hsv)
-        # cv2.imshow("MASK", mask)
-        # cv2.waitKey(1)
+        cv2.circle(mask, (int(cx), int(cy)), 10, (0, 0, 255), -1)
+        cv2.imshow("orignal", cv_image)
+        # cv2.imshow("hsv", hsv)
+        cv2.imshow("MASK", mask2)
+        cv2.waitKey(1)
 
         #################################
         ###   ENTER CONTROLLER HERE   ###
@@ -164,12 +174,16 @@ class LineFollower(object):
         start_time = None
         while not rospy.is_shutdown():
 
-            self.camera_pub.publish(self.camera_flag)
             # Make it start turning
             if self.status == 'c':
                 self.vel_pub.publish(self.twist_object)
 
             else:
+                self.twist_object.linear.x = 0
+                self.twist_object.angular.z = 0
+                self.vel_pub.publish(self.twist_object)
+                break
+            if self.april_tag_flag == 'T':
                 self.twist_object.linear.x = 0
                 self.twist_object.angular.z = 0
                 self.vel_pub.publish(self.twist_object)
@@ -190,7 +204,8 @@ def main():
 
     while line_follower_object.status != 'c':
         continue
-    # while line_follower_object.status != 'b':
+
+    # while line_follower_object.camera_flag != 'T':
     #     continue
 
     rospy.sleep(2)
