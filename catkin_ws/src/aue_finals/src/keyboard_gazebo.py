@@ -124,9 +124,9 @@ class KeyBoard():
             if self.keyboard_input == 'c':
                 self.keyboard_input = 'e'
         # Draw the centroid in the resultut image
-        # cv2.circle(mask, (int(cx), int(cy)), 10, (0, 0, 255), -1)
-        # cv2.imshow("MASK", mask)
-        # cv2.waitKey(1)
+        cv2.circle(mask, (int(cx), int(cy)), 10, (0, 0, 255), -1)
+        cv2.imshow("MASK", mask)
+        cv2.waitKey(1)
 
     def camera_callback(self, msg):
         try:

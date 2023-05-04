@@ -71,7 +71,7 @@ class LineFollower(object):
         # crop_img = cv_image[220:240][1:320]
         # Convert from RGB to HSV
         hsv = cv2.cvtColor(crop_img, cv2.COLOR_BGR2HSV)
-        # hsv2 = cv2.cvtColor(cv_image, cv2.COLOR_BGR2HSV)
+        hsv2 = cv2.cvtColor(cv_image, cv2.COLOR_BGR2HSV)
         # Define the Yellow Colour in HSV
 
         """
@@ -83,15 +83,17 @@ class LineFollower(object):
         # lower_yellow = np.array([45, 30, 30])
         # upper_yellow = np.array([97, 255, 209])
         # with flashlight
-        lower_yellow = np.array([15, 32, 70])
-        upper_yellow = np.array([75, 255, 210])
+        # lower_yellow = np.array([10, 32, 70])
+        # upper_yellow = np.array([75, 255, 210])
+        lower_yellow = np.array([30, 10, 10])
+        upper_yellow = np.array([85, 135, 250])
         # stop sign hsv value
         # lower_red = np.array([20, 20, 80])
         # upper_red = np.array([60, 60, 255])
 
-        # stop sign hsv value with flashlight
-        lower_red = np.array([70, 70, 70])
-        upper_red = np.array([150, 190, 190])
+        # stop sign hsv value with flashlight bgr
+        lower_red = np.array([40, 40, 130])
+        upper_red = np.array([90, 90, 180])
 
         mask = cv2.inRange(hsv, lower_yellow, upper_yellow)
         mask2 = cv2.inRange(cv_image, lower_red, upper_red)
@@ -106,9 +108,10 @@ class LineFollower(object):
             x, y, w, h = cv2.boundingRect(cnt)
         except:
             w = 0
+            h = 0
 
-        # rospy.loginfo(f"the width of the stop sign {w}")
-
+        rospy.loginfo(f"the width of the stop sign {w}")
+        rospy.loginfo(f"the height of the stop sign is {h}")
         # Calculate centroid of the blob of binary image using ImageMoments
         m = cv2.moments(mask, False)
 
@@ -116,7 +119,7 @@ class LineFollower(object):
             cx, cy = m['m10'] / m['m00'], m['m01'] / m['m00']
             self.camera_flag = 'T'
             self.traj_flag = True
-            rospy.loginfo("Find the yellow line!!!!!!!!!!!")
+            # rospy.loginfo("Find the yellow line!!!!!!!!!!!")
         except ZeroDivisionError:
             cx, cy = self.height / 2, self.width / 2
             self.traj_flag = False
@@ -125,20 +128,20 @@ class LineFollower(object):
         # cv2.circle(img, center, radius, color[, thickness[, lineType[, shift]]])
         cv2.circle(mask, (int(cx), int(cy)), 10, (0, 0, 255), -1)
         cv2.imshow("orignal", cv_image)
-        # cv2.imshow("hsv", hsv)
+        cv2.imshow("mask1", mask)
         cv2.imshow("MASK", mask2)
         cv2.waitKey(1)
 
-        #################################
+        ##################################################################
         ###   ENTER CONTROLLER HERE   ###
         #################################
         # if self.camera_flag == 'T':
         #     self.find_trajectory(cx, cy, w)
-        self.find_trajectory(cx, cy, w)
+        self.find_trajectory(cx, cy, w, h)
 
         # rospy.loginfo("ANGULAR VALUE SENT===>"+str(self.twist_object.angular.z))
 
-    def find_trajectory(self, cx, cy, w):
+    def find_trajectory(self, cx, cy, w, h):
         # if not see the trajectory
         # rospy.loginfo("control the turtlebot3!")
         if self.traj_flag == False:
@@ -156,7 +159,7 @@ class LineFollower(object):
             # rospy.loginfo("the error is {}".format(-1 * err))
 
         if self.once_stop_flag == False and self.traj_flag == True:
-            if self.start_time == None and w > 20:
+            if self.start_time == None and w > 20 and h > 5 and h < 10:
                 self.start_time = rospy.get_time()
             now = rospy.get_time()
             if self.start_time != None:
@@ -176,6 +179,7 @@ class LineFollower(object):
 
             # Make it start turning
             if self.status == 'c':
+                # pass
                 self.vel_pub.publish(self.twist_object)
 
             else:
@@ -184,9 +188,12 @@ class LineFollower(object):
                 self.vel_pub.publish(self.twist_object)
                 break
             if self.april_tag_flag == 'T':
+                rospy.loginfo("get the april tag flag!")
                 self.twist_object.linear.x = 0
                 self.twist_object.angular.z = 0
                 self.vel_pub.publish(self.twist_object)
+                rospy.sleep(3)
+                rospy.loginfo("stop the line following!!!!!")
                 break
 
             self.rate.sleep()

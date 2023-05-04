@@ -89,10 +89,10 @@ class WallFollowing():
         return d_90 - d_270
 
     def pdController_lat(self, error_lat):
-        # pGain_lat = 1.0
-        # dGain_lat = 0.5
-        pGain_lat = 0.7
-        dGain_lat = 0.3
+        # pGain_lat = 0.7
+        pGain_lat = 0.9
+        # dGain_lat = 0.3
+        dGain_lat = 0.4
         now = self._current_time()
         dt = now - self._last_time if self._last_time is not None else 1e-10
         pValue = pGain_lat * error_lat
@@ -105,7 +105,7 @@ class WallFollowing():
         return pValue + dValue
 
     def pController_long(self, dist):
-        pGain_long = 0.15
+        pGain_long = 0.10
         return pGain_long * dist
 
     def wallFollowing(self):

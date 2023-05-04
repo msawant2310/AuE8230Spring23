@@ -37,8 +37,8 @@ class tagFollow():
             self.get_april_tag = True
             self.april_tag_flag = 'T'
             self.april_tag_pub.publish(self.april_tag_flag)
-            rospy.loginfo(
-                "x position is {}, z position is {}".format(self.x, self.z))
+            # rospy.loginfo(
+            # "x position is {}, z position is {}".format(self.x, self.z))
         else:
             self.get_april_tag = False
 
